@@ -16,13 +16,15 @@ class MyTools():
         return inner
 
 
-@MyTools.timer
-def mytest():
-    time.sleep(3)
-    print('hahah')
 
+if __name__ == '__main__':
 
-mytest()
+    @MyTools.timer
+    def mytest():
+        time.sleep(3)
+        print('正在处理...')
+
+    mytest()
 
 
         
