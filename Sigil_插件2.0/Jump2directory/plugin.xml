@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+<name>Jump2directory</name>
+<type>edit</type>
+<author>Shaw</author>
+<description>Format original notes !</description>
+<engine>python3.4</engine>
+<version>1.1</version>
+<autostart>true</autostart>
+<oslist>osx,unx,win</oslist>
+</plugin>

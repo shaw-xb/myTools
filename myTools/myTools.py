@@ -15,7 +15,6 @@ class MyTools():
             return res
         return inner
 
-
 if __name__ == '__main__':
     @MyTools.timer
     def mytest():
