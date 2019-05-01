@@ -9,7 +9,6 @@ import re
 from lxml import etree
 
 
-
 class Jump2directory():
 
     def __init__(self, bk):
