@@ -17,7 +17,6 @@ class MyTools():
 
 
 if __name__ == '__main__':
-
     @MyTools.timer
     def mytest():
         time.sleep(3)
