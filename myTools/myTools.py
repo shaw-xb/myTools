@@ -16,7 +16,6 @@ class MyTools():
         return inner
 
 
-
 if __name__ == '__main__':
 
     @MyTools.timer
