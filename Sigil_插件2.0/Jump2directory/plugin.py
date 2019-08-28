@@ -9,34 +9,12 @@ import re
 from lxml import etree
 
 
+
 class Jump2directory():
 
     def __init__(self, bk):
         self.bk = bk
         self.bit = 3
-
-    # 处理 toc.ncx
-    def processNcx(self):
-        id = "toc_ncx"
-        html = self.bk.readfile(id)
-        html_original = html
-        xml, ns = self.getXml(html)
-        # 获取 navPoint 节点 列表
-        navPointList = xml.findall("{0}navMap//{0}navPoint".format(ns))
-        if navPointList:
-            for navPoint in navPointList:
-                playOrder = navPoint.attrib.get("playOrder")
-                content = navPoint.find("{0}content".format(ns))
-                src = content.attrib.get("src")
-                deep = self.playOrder2DeepDic.get(playOrder)
-                if deep == "1":
-                    src = src.split("#")[0]
-                else:
-                    src = src.split("#")[0] + "#a{}".format(playOrder.zfill(self.bit))
-                content.set("src", src)
-        html = etree.tostring(xml, encoding="utf-8").decode("utf-8")
-        if not html == html_original:
-            self.bk.writefile(id, html)
 
     # 判断是否有toc.xhtml 没有则不处理
     def isProcess(self):
@@ -161,37 +139,47 @@ class Jump2directory():
     def processChapetrXhtml(self,id, html):
         print("正在处理：{}...".format(id))
         xml, ns = self.getXml(html)
+        # 目录中所有的h标签
         aListFromToc = self.navDic.get(id, None)
-        baseIndex = 0
-        refDeep = 1
+
         if aListFromToc:
             for h in aListFromToc:
                 deep = int(h.get("deep"))
-                if deep == refDeep:
-                    pass
-                else:
-                    baseIndex = 0
-                    refDeep = deep
                 title = h.get("title")
                 playOrder = h.get("playOrder")
                 aListFromChapter = xml.findall("{0}body//{0}h{1}".format(ns, deep))
+                # print(aListFromChapter)
                 if aListFromChapter:
-                    h = aListFromChapter[baseIndex]
-                    baseIndex += 1
-                    self.setChapterXhtml_h(id, h, playOrder, title, deep)
+                    for hFromChapter in aListFromChapter:
+                        temId = hFromChapter.get("id")
+                        if (temId != None) and (len(temId) == (self.bit+1)) and (temId[0] == "a"):
+                            continue
+                        self.setChapterXhtml_h(id, hFromChapter , playOrder, title, deep)
+                        break
+
         html = etree.tostring(xml, encoding="utf-8").decode("utf-8")
         return html
 
     def setChapterXhtml_h(self,id, h, playOrder, title, deep):
         a = etree.Element("a")
         text = h.text
+        # print(text,"-"*100)
         h.text = None
         if not text:
             text = title
         h.set("id", "a{}".format(playOrder.zfill(self.bit)))
-        if h.getchildren():
-            a = h.getchildren()[0]
-            a.set("href", "../Text/toc.xhtml#t{}".format(playOrder.zfill(self.bit)))
+        hChildrens = h.getchildren()
+        if hChildrens:
+            x = hChildrens[0]
+            # print(x.text,"="*100)
+            if x.text == text:
+                x.set("href", "../Text/toc.xhtml#t{}".format(playOrder.zfill(self.bit)))
+            else:
+                a.set("href", "../Text/toc.xhtml#t{}".format(playOrder.zfill(self.bit)))
+                a.text = text
+                h.append(a)
+                for cNode in hChildrens:
+                    h.append(cNode)
         else:
             a.set("href", "../Text/toc.xhtml#t{}".format(playOrder.zfill(self.bit)))
             a.text = text
@@ -202,6 +190,13 @@ class Jump2directory():
     # 可能会有部分属性缺失的情况，看需不需要特殊处理
     def processText(self):
         self.navDic, self.playOrder2DeepDic = self.getTocInfo()
+        print("+"*100)
+        for k, v in self.navDic.items():
+            print("="*100)
+            print(k, ":")
+            for i in v:
+                print(i)
+        print("+" * 100)
         if self.isProcess():
             for id, href in self.bk.text_iter():
                 html = self.bk.readfile(id)
@@ -227,7 +222,6 @@ def run(bk):
     jd = Jump2directory(bk)
     # jd.getTocInfo()
     jd.processText()
-    jd.processNcx()
 
 
     return 0
