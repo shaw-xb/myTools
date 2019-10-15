@@ -1,0 +1,32 @@
+BaiduPCS-Go 下载文件出现 403 Forbidden 的解决方法
+https://cloud.tencent.com/developer/article/1430380
+
+
+创建 baidu_shurufa 目录
+设置 appid
+BaiduPCS-Go 是一款由 iikira 大佬使用 Go 语言编写的第三方百度网盘客户端，点此直达项目地址。BaiduPCS-Go 支持 Windows、macOS、linux、移动设备等平台，支持多个文件或目录下载, 支持断点续传和单文件并行下载，功能强大，下载速度快。博主在 Linux 上一直使用该软件来实现本地文件同百度云的下载与同步，但在使用的过程中遇到一个问题，就是大文件下载或多文件下载的时候有时会出现 403 Forbidden 的错误，此为百度网盘禁止访问所致。本文详细介绍 BaiduPCS-Go 下载文件出现 403 Forbidden 的解决方法，按照本文描述的步骤操作，一般会完美解决 403 Forbidden 的问题。
+
+创建 baidu_shurufa 目录
+首先使用浏览器登陆百度网盘，登陆成功后访问以下网址：
+
+http://pcs.baidu.com/rest/2.0/pcs/file?app_id=265486&method=list&path=%2F
+
+网页会显示以下类似的内容：
+
+{"error_code":31064,"error_msg":"file is not authorized","request_id":***************}
+然后进入百度网盘，进入“我的应用数据”目录，里面会出现一个名为 baidu_shurufa 的目录，该目录就是我们需要的目录，把需要下载的文件或文件夹移动到该目录。
+
+设置 appid
+首先进入 BaiduPCS-Go 程序目录并执行程序，然后使用如下命令进入 baidu_shurufa 目录：
+
+cd /apps/baidu_shurufa
+使用如下命令设置 appid 为 265486 ：
+
+config set -appid=265486
+以上两步操作完成后重新开始文件下载即可，看看 403 Forbidden 的问题是不是已经完美解决。如果下载速度不理想，可以使用如下命令设置下载最大并发量。注意，下载最大并发量建议值为 50~500 , 太低下载速度提升不明显甚至速度会变为 0 , 太高可能会导致程序出错被操作系统结束掉。本文以设置最大并发量为 350 为例：
+
+config set -max_parallel 350
+设置完成后重新开启下载即可，本文结束。
+
+文章来源地址：https://timelate.com/archives/fix-403-forbidden-issue-for-baidupcs-go.html
+
