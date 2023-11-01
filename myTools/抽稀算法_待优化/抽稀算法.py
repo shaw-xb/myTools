@@ -32,7 +32,7 @@ class Grid():
 
     def read_data(self):
         try:
-            data = pd.read_excel(self.file_path, dtype={self.X: np.float, self.Y: np.float})
+            data = pd.read_excel(self.file_path, dtype={self.X: float, self.Y: float})
             data = data.loc[:, [self.point_name, self.X, self.Y]]
             # 去除有空值的行
             data.dropna(axis=0, how='any', inplace=True)
