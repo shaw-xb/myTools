@@ -1,0 +1,40 @@
+{
+  "displayFieldName" : "",
+  "fieldAliases" : {
+    "type" : "type"
+  },
+  "geometryType" : "esriGeometryPolyline",
+  "spatialReference" : {
+    "wkid" : 4326,
+    "latestWkid" : 4326
+  },
+  "fields" : [
+    {
+      "name" : "type",
+      "type" : "esriFieldTypeString",
+      "alias" : "type",
+      "length" : 254
+    }
+  ],
+  "features" : [
+    {
+      "attributes" : {
+        "type" : "线路名称"
+      },
+      "geometry" : {
+        "paths" : [
+          [
+			[
+				114.665475,
+				30.06853333
+			],
+			[
+				114.6651675508,
+				30.068611078
+			]
+          ]
+        ]
+      }
+    }
+  ]
+}
